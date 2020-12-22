@@ -40,7 +40,7 @@ public class CatalogItem
         for (Feature f : features) {
             result.addAll(f.getContributors());
         }
-        return List.copyOf(result);
+        return  result; // List.copyOf(result);
     }
 
     public List<String>  getTitles()

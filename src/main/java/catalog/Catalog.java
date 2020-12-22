@@ -74,99 +74,54 @@ public class Catalog
     }
 
 
-
-
-
     public double averagePageNumberOver(int page)
     {
-        int szamlalo = 0;
-        int sum = 0;
-        double atlag = 0;
-        for (int i=0; i < catalogItems.size(); i++)
+        if (page < 1 )
         {
-            if(catalogItems.get(i).hasPrintedFeature())
+            throw new IllegalArgumentException("Page number must be positive");
+        }
+        int sum = 0;
+        int szamlalo = 0;
+        double atlag = 0;
+        for (CatalogItem catalogItem : catalogItems)
+        {
+            if (catalogItem.hasPrintedFeature())
             {
-                for(int j = 0; j < catalogItems.get(i).features.size(); j++)
-                {
-                    if (catalogItems.get(i).features.get(j) instanceof PrintedFeatures)
-                    {
-                        sum = sum + ((PrintedFeatures) catalogItems.get(i).features.get(j)).numberofPages;
-                        szamlalo++;
-                    }
-                }
-                atlag = sum/szamlalo;
-                if (atlag > page)
-                {
-                    return atlag;
-                }
+                sum = sum + catalogItem.numberOfPagesAtOneItem();
+                szamlalo = szamlalo + 1;
             }
         }
-        return 0;
+        atlag = sum / szamlalo;
+        if (atlag > page)
+        {
+            return atlag;
+        }
+        throw new IllegalArgumentException("No page");
     }
 
 
-    public List<CatalogItem>  findByCriteria(SearchCriteria search)
+    public List<CatalogItem> findByCriteria(SearchCriteria search)
     {
-        List<CatalogItem> listamind2 = new ArrayList<>();
-        List<CatalogItem> listaContributors = new ArrayList<>();
-        List<CatalogItem> listaTitles = new ArrayList<>();
+        List<CatalogItem> results = new ArrayList<>();
 
-            if(search.hasContributor()  &&  search.hasTitle())
+        for (CatalogItem catalogItem : catalogItems)
+        {
+            if  (search.hasContributor() && catalogItem.getContributors().contains(search.getContributor())
+                    &&
+                    search.hasTitle() && catalogItem.getTitles().contains(search.getTitle()))
             {
-                for (int i = 0; i < catalogItems.size(); i++)
-                {
-                    for (int j = 0; j < catalogItems.get(i).getFeatures().size(); i++)
-                    {
-                        if (search.getContributor().equals(catalogItems.get(i).getFeatures().get(j).getContributors())
-                                                                 &&
-                                search.getTitle().equals(catalogItems.get(i).getFeatures().get(j).getTitle())) ;
-                        {
-                            listamind2.add(catalogItems.get(i));
-                        }
-                    }
-                }
+                results.add(catalogItem);
             }
-
-            if(search.hasContributor())
+            else if (search.hasContributor() && catalogItem.getContributors().contains(search.getContributor()))
             {
-                for (int i = 0; i<catalogItems.size(); i++)
-                {
-                    for (int j = 0; j < catalogItems.get(i).getFeatures().size(); i++)
-                    {
-                        if (search.getContributor().equals(catalogItems.get(i).getFeatures().get(j).getContributors()))
-                        {
-                            listaContributors.add(catalogItems.get(i));
-                        }
-                    }
-                }
+                results.add(catalogItem);
             }
-
-            if (search.hasTitle())
+            else if (search.hasTitle() && catalogItem.getTitles().contains(search.getTitle()))
             {
-                for (int i = 0; i<catalogItems.size(); i++)
-                {
-                    for (int j = 0; j < catalogItems.get(i).getFeatures().size(); i++)
-                    {
-                        if (search.getContributor().equals(catalogItems.get(i).getFeatures().get(j).getContributors()))
-                        {
-                            listaTitles.add(catalogItems.get(i));
-                        }
-                    }
-                }
+                results.add(catalogItem);
             }
-
-            if((search.hasContributor()  &&  search.hasTitle()))
-            {
-                return listamind2;
-            }
-            if((search.hasContributor()))
-            {
-                return listaContributors;
-            }
-            else
-            {
-                return listaTitles;
-            }
+        }
+        return results;
     }
 }
 

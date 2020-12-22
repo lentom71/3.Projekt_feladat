@@ -58,7 +58,7 @@ public class SearchCriteria
         return new SearchCriteria(null, title);
     }
 
-    public static SearchCriteria  createByBoth(String contributor,  String title)
+    public static SearchCriteria  createByBoth(String title,  String contributor)
     {
         if(contributor == null ||  title ==  null)
         {
