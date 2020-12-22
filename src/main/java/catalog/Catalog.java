@@ -85,7 +85,7 @@ public class Catalog
         double atlag = 0;
         for (CatalogItem catalogItem : catalogItems)
         {
-            if (catalogItem.hasPrintedFeature())
+            if (catalogItem.hasPrintedFeature() && catalogItem.numberOfPagesAtOneItem() > page)
             {
                 sum = sum + catalogItem.numberOfPagesAtOneItem();
                 szamlalo = szamlalo + 1;
